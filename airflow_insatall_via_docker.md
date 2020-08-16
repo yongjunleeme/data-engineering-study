@@ -20,8 +20,6 @@ $ docker --version
 $  sudo docker run hello-world
 ```
 
-
-
 ## Airflow 설치
 
 먼저 dags 폴더를 하나 만든다. 이 폴더 아래 Python으로 만든 DAG 코드가 존재해야 한다.
@@ -111,9 +109,13 @@ $ sudo docker stop angry_wu
 ```
 
 Airflow를 재실행한다.
+
 ```
 sudo docker run -d -p 8080:8080 -v /home/ubuntu/dags:/usr/local/airflow/dags puckel/docker-airflow webserver
 ```
+
+-v 옵션 -> /home/ubuntu/dags를 /usr/local/airflow/dags에 복사
+로컬 dags와 가상도커 내 dags가 싱크 됨
 
 ### 이미 실행된 Airflow Docker Container를 같은 인자로 다시 재실행하고 싶다면 
 
