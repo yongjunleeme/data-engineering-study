@@ -7,8 +7,8 @@ import psycopg2
 
 def get_Redshift_connection():
     host = "grepp-data.cduaw970ssvt.ap-northeast-2.redshift.amazonaws.com"
-    redshift_user = ""  # 하드코딩 노노 Airflow UI -> Admin -> Connections -> Create 
-    redshift_pass = ""  
+    redshift_user = ""  # 본인 ID 사용
+    redshift_pass = ""  # 본인 Password 사용
     port = 5439
     dbname = "dev"
     conn = psycopg2.connect("dbname={dbname} user={user} host={host} password={password} port={port}".format(
@@ -40,13 +40,13 @@ def transform(text):
 def load(lines):
     logging.info("load started")
     cur = get_Redshift_connection()
-    sql = "BEGIN;DELETE FROM TABLE raw_data.name_gender;" # 트랜잭션 - sql구문 시작과 끝에 BEGIN, END # DELETE FROM -> TRUNCATE과 같지만 TRUNCATE은 롤백이 안 된다.
+    sql = "BEGIN;DELETE FROM TABLE raw_data.name_gender;"
     for l in lines:
         if l != '':
             (name, gender) = l.split(",")
             sql += "INSERT INTO raw_data.name_gender VALUES ('{name}', '{gender}');"
-    sql += "END;" # END -> COMMIT도 가능
-    cur.execute(sql) # try, except로 감싸지 않는 이유는 Airflow에서는 Fail로
+    sql += "END;"
+    cur.execute(sql)
     logging.info(sql)
     logging.info("load done")
 
@@ -67,3 +67,4 @@ task = PythonOperator(
 	task_id = 'perform_etl',
 	python_callable = etl,
 	dag = dag_second_assignment)
+  
